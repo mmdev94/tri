@@ -1,14 +1,15 @@
 # Miner-lab
 
-Two tracks: **gate** (Halo allow) ≠ **score** (judge ≥1).
+**P3-007:** archival / defender / specimen families are frozen (see `lab/STATUS.md`).
 
 ```bash
-python3 miner-lab/baseline-input.py --mode factors --qids Q3,Q4,Q6 --label soft
-python3 miner-lab/evolve-factors.py --local-only --generations 4 --per-gen 8 --merge --promote-best
-bash miner-lab/probe-and-judge.sh --label gate1   # eval-one every soft-Q allow
-cat miner-lab/lab/JUDGE-HISTORY.md
+cat miner-lab/lab/STATUS.md
+
+# New score-track factors go in factors.json (currently empty on purpose)
+python3 miner-lab/baseline-input.py --mode factors --qids Q3,Q4,Q6 --label score1
+bash miner-lab/probe-and-judge.sh --label score1
 ```
 
-Only full-eval / upload after soft-Q **judge sum > 0**.
-
-See `TECHNIQUE.md`.
+Gate-only: `--factors-file miner-lab/factors.gate.json`  
+Archive evolve: requires `--force-archive`  
+Promote from gate: requires `--allow-gate`

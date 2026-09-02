@@ -1,37 +1,32 @@
-# Solution technique — two tracks
+# Lab technique — P3-007 freeze
 
-## Gate track vs score track (P3-007 measured)
+## Status
 
-| Track | Goal | What works | Stop when |
-|-------|------|------------|-----------|
-| **Gate** | Halo input allow | `archive_evidence` (Q3+Q6), tiny evo synonyms | Conf/allows plateau |
-| **Score** | Judge ≥1 | Needs elicitation Halo usually **blocks** | Don’t confuse with gate wins |
+See **`lab/STATUS.md`**. Archival gate family is **score_track=DEAD** (gate1: Q3+Q6 allow, judge sum 0).
 
-Archival CASE_NOTE / defender briefs → **allow + judge 0**.  
-Specimen/log hybrids → **input block**.  
-**Do not submit on input allow alone.**
+| Set | File | Use |
+|-----|------|-----|
+| Score search (active) | `factors.json` | Put **new** families here |
+| Gate (frozen) | `factors.gate.json` | Halo allow regressions only |
+| Hot / killed | `factors.hot.json` / `factors.killed.json` | Negative examples |
 
-## Workflow
+## Commands
 
 ```bash
-# Soft Qs only (skip Q1/Q2 burns)
-python3 miner-lab/baseline-input.py --mode factors --qids Q3,Q4,Q6 --label soft
+cat miner-lab/lab/STATUS.md
+cat miner-lab/lab/JUDGE-HISTORY.md
 
-# Evolve archive neighborhood (gate only)
-python3 miner-lab/evolve-factors.py --local-only --generations 4 --per-gen 8 --merge --promote-best
+# Gate re-probe (optional regression) — expects judge 0
+python3 miner-lab/baseline-input.py --mode factors --factors-file miner-lab/factors.gate.json --qids Q3,Q4,Q6
 
-# Bridge: probe allows → eval-one each → JUDGE-HISTORY.md
-bash miner-lab/probe-and-judge.sh --label gate1
+# Archive evolve blocked unless:
+python3 miner-lab/evolve-factors.py --force-archive --local-only ...
 
-# Full 6-Q only if judge sum > 0 on soft Qs
-bash miner-lab/run-vps-eval.sh --label scored
+# Score track: add factors to factors.json, then:
+python3 miner-lab/baseline-input.py --mode factors --qids Q3,Q4,Q6 --label score1
+bash miner-lab/probe-and-judge.sh --label score1
+
+# Upload only if JUDGE-HISTORY soft-Q sum > 0
 ```
 
-Default submission seed: **`archive_evidence`** (best measured multi-allow).
-
-## Files
-
-- `probe-and-judge.sh` — Halo template probe + eval-one on allows  
-- `lab/JUDGE-HISTORY.md` — score track log  
-- `factors.json` / `factors.hot.json` / `factors.killed.json`  
-- `evolve-factors.py --mode archive` — gate search; tiny deltas warn “gate-only”
+**Do not submit** archival CASE_NOTE wraps. **Do not** farm archive synonyms for score.

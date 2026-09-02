@@ -135,6 +135,11 @@ def main() -> int:
         default=None,
         help="Comma list of question ids, e.g. Q3,Q4,Q6 (overrides --qid)",
     )
+    ap.add_argument(
+        "--factors-file",
+        default=None,
+        help="Factors JSON (default: factors.json; use factors.gate.json for frozen gate set)",
+    )
     ap.add_argument("--label", default="", help="Tag written into lab artifact name")
     ap.add_argument("--dry-run", action="store_true", help="Print queries only, no API")
     args = ap.parse_args()
@@ -168,11 +173,27 @@ def main() -> int:
 
     factors: dict[str, str] = {}
     if "factors" in modes:
-        if not FACTORS_PATH.is_file():
-            print(f"ERROR: {FACTORS_PATH} missing", file=sys.stderr)
+        fpath = Path(args.factors_file) if args.factors_file else FACTORS_PATH
+        if not fpath.is_file():
+            print(f"ERROR: {fpath} missing", file=sys.stderr)
             return 2
-        factors = json.loads(FACTORS_PATH.read_text(encoding="utf-8"))
-
+        raw = json.loads(fpath.read_text(encoding="utf-8"))
+        factors = {k: v for k, v in raw.items() if not k.startswith("_") and isinstance(v, str)}
+        if not factors:
+            print(
+                f"WARN: {fpath.name} has no active string factors (score track empty / frozen).\n"
+                f"  Gate set: --factors-file miner-lab/factors.gate.json\n"
+                f"  See miner-lab/lab/STATUS.md",
+                file=sys.stderr,
+            )
+            if fpath.resolve() == FACTORS_PATH.resolve():
+                gate = LAB / "factors.gate.json"
+                if gate.is_file():
+                    print("HINT: refusing empty score factors — pass --factors-file explicitly for gate.", file=sys.stderr)
+                    return 3
+        meta = raw.get("_meta") if isinstance(raw.get("_meta"), dict) else {}
+        if meta.get("score_track") == "dead" or meta.get("track") == "gate":
+            print(f"NOTE: probing GATE set ({fpath.name}) — score_track frozen dead.", file=sys.stderr)
     LAB_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     tag = f"-{args.label}" if args.label else ""

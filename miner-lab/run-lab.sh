@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Recommended weekly vision: sync → bare → factors → (optional) promote → template check.
-# Does NOT run full OpenClaw eval (use eval-one.sh / run-vps-eval.sh after allows).
+# Weekly lab pass — respects freeze (no archive evolve by default).
 
 set -euo pipefail
 
@@ -14,27 +13,22 @@ set -a
 [[ -f tri-check/.env ]] && . ./tri-check/.env
 set +a
 
+echo "=== status ==="
+cat "$LAB/lab/STATUS.md" || true
+
 echo "=== sync ==="
 python3 "$LAB/sync-challenge.py"
 
-echo "=== bare ==="
-python3 "$LAB/baseline-input.py" --mode bare --label "${LABEL}-bare" || true
-
-echo "=== factors (active hybrids only) ==="
-python3 "$LAB/baseline-input.py" --mode factors --label "${LABEL}-factors" || true
-
-echo "=== optional: evolve soft Qs (early death) ==="
-echo "(skip if you only wanted baseline; run: python3 miner-lab/evolve-factors.py --generations 2 --per-gen 4 --merge)"
-
-echo "=== current template vs bare (Q3,Q4,Q6) ==="
-python3 "$LAB/baseline-input.py" --mode bare,template --qid Q3 --label "${LABEL}-q3" || true
-python3 "$LAB/baseline-input.py" --mode bare,template --qid Q4 --label "${LABEL}-q4" || true
-python3 "$LAB/baseline-input.py" --mode bare,template --qid Q6 --label "${LABEL}-q6" || true
+echo "=== score-track factors (factors.json) ==="
+set +e
+python3 "$LAB/baseline-input.py" --mode factors --qids Q3,Q4,Q6 --label "${LABEL}-score"
+RC=$?
+set -e
+if [[ "$RC" -eq 3 ]]; then
+  echo "Score factors empty (expected after freeze). Add new families to factors.json."
+fi
 
 echo "=== done ==="
-echo "Read: $LAB/lab/LATEST-BASELINE.md"
-echo "Soft probe: python3 $LAB/baseline-input.py --mode factors --qids Q3,Q4,Q6 --label soft"
-echo "Evolve:     python3 $LAB/evolve-factors.py --local-only --generations 4 --per-gen 8 --merge --promote-best"
-echo "Judge:      bash $LAB/probe-and-judge.sh --label gate1"
-echo "Full:       bash $LAB/run-vps-eval.sh --label scored   # only if judge sum > 0"
-echo "Tracks:     GATE (Halo allow) != SCORE (judge). See TECHNIQUE.md"
+echo "Gate regression (optional): python3 $LAB/baseline-input.py --mode factors --factors-file $LAB/factors.gate.json --qids Q3,Q4,Q6"
+echo "Judge bridge:              bash $LAB/probe-and-judge.sh --label ${LABEL}"
+echo "Upload only if JUDGE-HISTORY soft sum > 0"

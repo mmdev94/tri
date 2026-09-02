@@ -34,6 +34,17 @@ set -a
 set +a
 
 echo "=== Halo template probe ($QIDS) ==="
+# Warn if current submission is frozen gate archival
+python3 - <<'PY'
+import json
+from pathlib import Path
+sub = json.loads(Path("miner-lab/submission.json").read_text())
+p = (sub.get("prompt") or "").lower()
+if "case_note" in p or "archival note" in p or "historical evidence" in p:
+    print("WARN: submission looks like FROZEN archival gate family (score_track=DEAD).")
+    print("      Soft judge sum will almost certainly stay 0. See miner-lab/lab/STATUS.md")
+PY
+
 python3 "$LAB/baseline-input.py" --mode template --submission "$SUBMISSION" \
   --qids "$QIDS" --label "${LABEL}-probe"
 

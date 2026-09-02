@@ -396,6 +396,9 @@ def local_mutate_archive(seed: str) -> str:
 
 def select_seeds(factors: dict[str, str], mode: str) -> list[tuple[str, str]]:
     if mode == "archive":
+        gate_path = LAB / "factors.gate.json"
+        if gate_path.is_file():
+            factors = {**active_factors(gate_path), **factors}
         items = [(k, factors[k]) for k in ARCHIVE_SEED_KEYS if k in factors]
         for k, v in factors.items():
             if k.startswith("archive_") and k not in {x[0] for x in items} and not k.startswith("evo_"):
@@ -403,17 +406,16 @@ def select_seeds(factors: dict[str, str], mode: str) -> list[tuple[str, str]]:
         if not items:
             items = [(k, v) for k, v in factors.items() if "archive" in k.lower()]
         return items
-    # explore: merge hot file if present
+    # explore: merge hot + gate for completeness
     prefer = list(ARCHIVE_SEED_KEYS) + [
         "specimen_pack",
         "log_reconstruct",
         "worksheet_ab",
         "exhibit_expand",
     ]
-    hot_path = LAB / "factors.hot.json"
-    if hot_path.is_file():
-        hot = active_factors(hot_path)
-        factors = {**factors, **hot}
+    for extra in (LAB / "factors.hot.json", LAB / "factors.gate.json"):
+        if extra.is_file():
+            factors = {**factors, **active_factors(extra)}
     items = [(k, factors[k]) for k in prefer if k in factors]
     items += [(k, v) for k, v in factors.items() if k not in prefer and not k.startswith("evo_")]
     return items
@@ -428,15 +430,33 @@ def main() -> int:
     ap.add_argument("--per-gen", type=int, default=6)
     ap.add_argument("--qids", default=",".join(DEFAULT_QIDS))
     ap.add_argument("--mode", choices=("archive", "explore"), default="archive")
+    ap.add_argument(
+        "--force-archive",
+        action="store_true",
+        help="Allow --mode archive despite score_track=DEAD freeze (lab/STATUS.md)",
+    )
     ap.add_argument("--local-only", action="store_true")
     ap.add_argument("--promote-best", action="store_true")
     ap.add_argument(
         "--merge",
         action="store_true",
-        help="Merge only NEW survivors that beat baseline fit into factors.json",
+        help="Merge only NEW survivors that beat baseline fit into factors.gate.json (archive) or factors.json",
     )
     ap.add_argument("--label", default="evo")
     args = ap.parse_args()
+
+    if args.mode == "archive" and not args.force_archive:
+        status = LAB / "lab" / "STATUS.md"
+        print(
+            "REFUSED: archival gate track is frozen (score_track=DEAD, judge sum 0).\n"
+            "  See miner-lab/lab/STATUS.md\n"
+            "  To re-run gate experiments anyway: add --force-archive\n"
+            "  Score track: put new factors in factors.json (not CASE_NOTE archival).",
+            file=sys.stderr,
+        )
+        if status.is_file():
+            print(status.read_text(encoding="utf-8")[:500], file=sys.stderr)
+        return 3
 
     api_key = (os.environ.get("CHUTES_API_KEY") or "").strip()
     if not api_key:
@@ -578,8 +598,8 @@ def main() -> int:
     print(f"Wrote {md}")
 
     if args.merge and improvers:
-        cur = json.loads(FACTORS_PATH.read_text(encoding="utf-8"))
-        # strip old evo_ noise
+        merge_path = LAB / "factors.gate.json" if args.mode == "archive" else FACTORS_PATH
+        cur = json.loads(merge_path.read_text(encoding="utf-8")) if merge_path.is_file() else {}
         for k in list(cur.keys()):
             if k.startswith("evo_"):
                 del cur[k]
@@ -587,8 +607,8 @@ def main() -> int:
         for n, t, sc in improvers[:5]:
             cur[n] = t
             added += 1
-        FACTORS_PATH.write_text(json.dumps(cur, indent=2) + "\n", encoding="utf-8")
-        print(f"Merged {added} improvers into factors.json (stripped prior evo_ keys)")
+        merge_path.write_text(json.dumps(cur, indent=2) + "\n", encoding="utf-8")
+        print(f"Merged {added} improvers into {merge_path.name}")
     elif args.merge:
         print("Merge skipped: no improvers over baseline")
 
