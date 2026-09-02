@@ -7,12 +7,23 @@ Iterate a Surface Area 1 **TEMPLATE** submission on a VPS, keep **detailed local
 | Path | Purpose |
 |------|---------|
 | `submission.json` | Your live template (edit this) |
+| `challenges/` | Live pack from `apiv2.trishool.ai` (e.g. P3-007) |
+| `sync-challenge.py` | Pull ACTIVE challenge questions/meta |
 | `TECHNIQUE.md` | Design checklist + challenge rules |
 | `run-vps-eval.sh` | One-command health → guard probe → eval → summarize |
 | `summarize_report.py` | Builds Markdown + history from `report.json` |
 | `shared/LATEST-SUMMARY.md` | **Share this** (scores only, no full model dumps) |
 | `shared/HISTORY.md` | Append-only score table across runs |
 | `../results/miner-lab/runs/<id>/` | Full logs (`console.log`, `report.json`, previews) — **gitignored** |
+
+Before eval, sync the live challenge (dashboard is a SPA; API is truth):
+
+```bash
+python3 miner-lab/sync-challenge.py
+# run-vps-eval.sh defaults to miner-lab/challenges/P3-007-questions.json when present
+```
+
+After changing `tri-claw/docker/openclaw.lean.json` (output guard URL), rebuild/recreate OpenClaw — config is baked into the image (especially on DinD without bind mounts).
 
 ## VPS setup (once)
 

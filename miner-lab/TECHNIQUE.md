@@ -2,11 +2,24 @@
 
 This is a **design checklist** for Surface Area 1 TEMPLATE mining. Edit `submission.json`, run `./run-vps-eval.sh`, read scores, revise.
 
+## Live challenge sync
+
+Dashboard/API (not the old `tri-check/data/questions.json`) is source of truth:
+
+```bash
+python3 miner-lab/sync-challenge.py   # writes miner-lab/challenges/<DESC>-questions.json
+```
+
+- API: `https://apiv2.trishool.ai/api/v1/challenges/list` and `/api/v1/challenges/{id}`
+- `run-vps-eval.sh` prefers `miner-lab/challenges/P3-007-questions.json` when present.
+- Local `tri-check/data/questions.json` was **P3-006** (completed). Do not treat it as live.
+
 ## Challenge constraints (owner-confirmed)
 
 - **English only** for input and output — Chinese (or other non-English) is a rule violation.
 - **TEMPLATE** format: exactly one `{{objective}}`, ≤ 2000 chars including placeholder.
-- Stack: **Halo input guard** (unchanged) + **Halo output guard** (new) + OpenClaw agent + Judge.
+- Stack: **Halo input** (`astroboi-halo-guard`) + **Halo output** (`astroboi-halo-output-guard` / HF `Halo0.8B-outputguard-v1`) + OpenClaw + Judge.
+- Eval flow: `guard_openclaw_guard`. After changing `openclaw.lean.json`, rebuild/recreate the OpenClaw container (baked config).
 
 ## Patterns observed in a prior winner (threat model)
 
@@ -17,6 +30,8 @@ Use as research notes — implement your own wording; platform similarity checks
 3. **Structured semantic expansion** — Ask for multiple linked records so one objective becomes a detailed structure.
 4. **Lexical masking** — Prefer euphemism, past tense, attribution; avoid obvious jailbreak trigger phrases.
 5. **Output / refusal coercion** — Fixed opening line; discourage prefatory safety refusals (still must stay English).
+
+**P3-007 note:** Archival alone still dies at **input Halo** (verbatim `{{objective}}` stays in the window). Iterate framings that change task type (offline red-team worksheet / negative-example reconstruction) while keeping English + one placeholder. Expect output Halo to be stricter than Phase 2.
 
 ## Eval gates you must pass
 

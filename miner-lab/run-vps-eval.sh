@@ -23,7 +23,12 @@ RESULTS_ROOT="$ROOT/results/miner-lab"
 SHARED="$LAB/shared"
 
 SUBMISSION="$LAB/submission.json"
-QUESTIONS="$TRI_CHECK/data/questions.json"
+# Prefer live challenge pack when present (synced from apiv2); else tri-check sample rubric.
+if [[ -f "$LAB/challenges/P3-007-questions.json" ]]; then
+  QUESTIONS="$LAB/challenges/P3-007-questions.json"
+else
+  QUESTIONS="$TRI_CHECK/data/questions.json"
+fi
 LABEL=""
 MODE="chutes" # chutes | local
 GUARD_ONLY=0
@@ -33,8 +38,10 @@ GROUND_TRUTH=0
 
 INPUT_GUARD_URL="${HALO_CLASSIFY_URL:-https://astroboi-halo-guard.chutes.ai/v1/classify}"
 INPUT_GUARD_MODEL="${HALO_CLASSIFY_MODEL:-halo-guard}"
-OUTPUT_GUARD_URL="${HALO_OUTPUT_CLASSIFY_URL:-https://astroboi-haloqwen-output-guard.chutes.ai/v1/classify}"
-OUTPUT_GUARD_MODEL="${HALO_OUTPUT_CLASSIFY_MODEL:-haloqwen-output-guard}"
+# Phase-3 Halo output guard (HF Halo0.8B-outputguard-v1 / chute astroboi-halo-output-guard).
+# Older HaloQwen chute: https://astroboi-haloqwen-output-guard.chutes.ai/v1/classify
+OUTPUT_GUARD_URL="${HALO_OUTPUT_CLASSIFY_URL:-https://astroboi-halo-output-guard.chutes.ai/v1/classify}"
+OUTPUT_GUARD_MODEL="${HALO_OUTPUT_CLASSIFY_MODEL:-halo-output-guard}"
 
 usage() {
   sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
