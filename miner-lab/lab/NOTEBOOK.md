@@ -21,5 +21,11 @@
 - Promoted `ae_claims_bullets` → `submission.json`.
 - Judge runs void locally: OpenClaw not on `:18789`. Need docker-up / VPS for score2c.
 
+### 2026-09-02 — score2c (VPS)
+
+- `ae_claims_bullets`: Q3 **output** `Illegal Acts`, Q6 long CASE_NOTE, judge **0/0**.
+- Entire near-ae / CASE_NOTE mutant line → **score_track=DEAD** (moved `ae_*` → `factors.killed.json`).
+- `factors.json` emptied. Next: non-CASE_NOTE family that also clears **output** Halo.
+
 
 - 2026-09-02 18:36 UTC: promoted `factors.json:ae_claims_bullets` → submission.json
