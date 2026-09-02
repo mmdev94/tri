@@ -54,24 +54,30 @@ low = prompt.lower()
 def ph(s: str) -> str:
     return hashlib.sha256(s.strip().encode()).hexdigest()[:16]
 
-gate_hashes = set()
-gate_path = Path("miner-lab/factors.gate.json")
-if gate_path.is_file():
-    raw = json.loads(gate_path.read_text(encoding="utf-8"))
+dead_hashes = set()
+for path in (Path("miner-lab/factors.gate.json"), Path("miner-lab/factors.killed.json")):
+    if not path.is_file():
+        continue
+    raw = json.loads(path.read_text(encoding="utf-8"))
     for k, v in raw.items():
         if not k.startswith("_") and isinstance(v, str):
-            gate_hashes.add(ph(v))
+            dead_hashes.add(ph(v))
 
-is_exact_gate = ph(prompt) in gate_hashes
-# also match GATE snapshot
 snap = Path("miner-lab/submission.GATE-archive_evidence.json")
 if snap.is_file():
     try:
         sp = json.loads(snap.read_text(encoding="utf-8")).get("prompt") or ""
-        if ph(sp) == ph(prompt):
-            is_exact_gate = True
+        dead_hashes.add(ph(sp))
     except Exception:
         pass
+
+is_dead_hash = ph(prompt) in dead_hashes
+# CASE_NOTE / near-ae family markers (score2c dead)
+is_case_note_family = (
+    "case_note" in low
+    or ("archival note" in low and "historical evidence" in low)
+    or ("compliance board" in low and "quoted evidence" in low)
+)
 
 score_factors = Path("miner-lab/factors.json")
 n_score = 0
@@ -85,29 +91,45 @@ if score_factors.is_file():
         if ph(v) == ph(prompt):
             in_score = True
 
-# Refuse EXACT frozen gate prompts only (near-mutations in factors.json OK).
-kind = "gate" if is_exact_gate else "other"
-print(f"{kind}\t{n_score}\t{is_exact_gate}\t{in_score}")
+# Refuse dead hashes always; refuse CASE_NOTE family when score track empty
+# (allows intentional in-score mutants only while factors.json has entries).
+kind = "other"
+if is_dead_hash:
+    kind = "dead"
+elif is_case_note_family and n_score == 0:
+    kind = "dead_family"
+elif is_case_note_family and not in_score:
+    kind = "dead_family"
+print(f"{kind}\t{n_score}\t{is_dead_hash}\t{is_case_note_family}\t{in_score}")
 PY
 )"
 
 GATE_KIND="$(echo "$GATE_CHECK" | cut -f1)"
 N_SCORE="$(echo "$GATE_CHECK" | cut -f2)"
 
-if [[ "$GATE_KIND" == "gate" && "$FORCE_GATE" -eq 0 ]]; then
+if [[ "$GATE_KIND" != "other" && "$FORCE_GATE" -eq 0 ]]; then
   cat >&2 <<EOF
-REFUSED: submission matches frozen GATE factor byte-for-byte (score_track=DEAD).
-  File: $SUBMISSION
-  See: miner-lab/lab/STATUS.md
+REFUSED: submission is frozen CASE_NOTE / near-ae family (score_track=DEAD).
+  kind=$GATE_KIND  file=$SUBMISSION
+  See: miner-lab/lab/STATUS.md  (score2c: judge sum 0 even when output allows)
 
-  Use a mutant from miner-lab/factors.json, or:
+  Do NOT re-run ae_claims_bullets / archive_evidence.
+  Add a NEW family to miner-lab/factors.json, then:
+    python3 miner-lab/promote-factor.py <name>
+    bash miner-lab/probe-and-judge.sh --label score3
+
+  Gate regression only:
     bash miner-lab/probe-and-judge.sh --force-gate --label gate-regression
 EOF
   exit 3
 fi
 
-if [[ "$N_SCORE" -eq 0 && "$GATE_KIND" != "gate" && "$FORCE_GATE" -eq 0 ]]; then
-  echo "WARN: factors.json still has 0 score-track templates — ensure submission is intentional." >&2
+if [[ "$N_SCORE" -eq 0 && "$FORCE_GATE" -eq 0 ]]; then
+  cat >&2 <<EOF
+REFUSED: factors.json has 0 active score templates (track empty after score2c).
+  Stale submission.json will not be probed. Invent NEW factors first.
+EOF
+  exit 3
 fi
 
 if [[ "$FORCE_GATE" -eq 1 ]]; then
