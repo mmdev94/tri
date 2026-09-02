@@ -36,5 +36,13 @@
 - Failed templates → `factors.failed-v5.json`. Active `factors.json` empty again.
 - Pareto unchanged: demotion↔judge-0 vs fulfill↔input-block.
 
+### 2026-09-02 — score6
+
+- Repopulated `factors.json`. Soft baseline: **`island_numbered`** Q3+Q6 allow (Q4@0.50).
+- `spec_*` again 0 allows → failed file.
+- Promoted `island_numbered` → `submission.json`. VPS: `probe-and-judge.sh --label score6 --qids Q3,Q6`.
+
 
 - 2026-09-02 18:36 UTC: promoted `factors.json:ae_claims_bullets` → submission.json
+
+- 2026-09-02 19:22 UTC: promoted `factors.json:island_numbered` → submission.json

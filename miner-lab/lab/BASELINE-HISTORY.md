@@ -17,3 +17,5 @@
 | 20260902T185806Z | score5-v5 | 0 | 24 | `baseline-20260902T185806Z-score5-v5.json` |
 | 20260902T190021Z | score5b | 0 | 24 | `baseline-20260902T190021Z-score5b.json` |
 | 20260902T190234Z | score5c-edge | 0 | 24 | `baseline-20260902T190234Z-score5c-edge.json` |
+| 20260902T192013Z | score6 | 3 | 27 | `baseline-20260902T192013Z-score6.json` |
+| 20260902T192232Z | dry-check-probe | 2 | 3 | `baseline-20260902T192232Z-dry-check-probe.json` |
