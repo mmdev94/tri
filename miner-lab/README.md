@@ -1,34 +1,30 @@
 # Miner-lab — systematic TEMPLATE mining
 
-**Vision:** Halo measure → hybrid wraps (not pure defender) → evolve with early death → eval-one → submit.
+**Vision:** quiet archive/mid wraps → evolve with early death → promote only if better → eval-one.
 
 ## Quick start
 
 ```bash
 bash miner-lab/run-lab.sh p3007
-python3 miner-lab/evolve-factors.py --generations 2 --per-gen 4 --merge --promote-best
-cat miner-lab/lab/LATEST-EVOLVE.md
 
-bash miner-lab/eval-one.sh Q6 --label hybrid1
-bash miner-lab/eval-one.sh Q4 --label hybrid1
+python3 miner-lab/evolve-factors.py --local-only --generations 4 --per-gen 8 --merge --promote-best
+# Promote is skipped unless fit beats baseline (no more archive_short loops).
+
+python3 miner-lab/baseline-input.py --mode template --qid Q6 --label check
+bash miner-lab/eval-one.sh Q6 --label mid1   # only if allow
 ```
 
-Pure `defender_overview` **allows input but judge=0** — retired to `factors.killed.json`.
+LLM mutate: `python3 miner-lab/evolve-factors.py --generations 3 --per-gen 6 --merge --promote-best`  
+(handles `content: null`; `enable_thinking: false`)
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `factors.json` | Active hybrids |
-| `factors.killed.json` | Retired / negative examples |
-| `evolve-factors.py` | LLM/local mutate + Halo early death |
-| `baseline-input.py` | Input classify |
-| `promote-factor.py` | Factor → submission |
-| `eval-one.sh` | One-Q full stack |
-| `run-lab.sh` / `run-vps-eval.sh` | Lab pass / full 6-Q |
-
-## Upload
-
-Only after local **allows + judge > 0** on at least one Q.
+| `factors.json` | Quiet archive + mid |
+| `factors.hot.json` | Specimen hybrids (`--mode explore`) |
+| `factors.killed.json` | Defender / grammar / v3 |
+| `evolve-factors.py` | Archive micro-evolve + early death |
+| `baseline-input.py` / `eval-one.sh` / `run-lab.sh` | Measure / one-Q / weekly pass |
 
 Details: `TECHNIQUE.md`.

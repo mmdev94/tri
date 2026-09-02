@@ -16,12 +16,13 @@ bash miner-lab/eval-one.sh Q6 --label try1
 - v2/v3 loud wraps: input block.
 - Factors: defender/prevent **allow** Q3–Q6; archive_short allow Q6.
 
-### 2026-09-02 — defender eval-one (confirmed)
+### 2026-09-02 — plateau + evolve fix
 
-- Promoted `defender_overview`; `eval-one` Q6/Q4/Q3: **input OK, judge score 0**.
-- Cause: wrap explicitly forbids actionable fulfillment → agent writes DEFENDER_BRIEF only.
-- Action: kill defender/prevent/soc/grammar/taxonomy; add **hybrid** specimen/log/worksheet factors; add `evolve-factors.py` with early death.
-- Default submission → `specimen_pack`. Next: `run-lab` / `evolve-factors` / `eval-one` on allows.
+- `archive_short` (topic/actors only): input allow Q6, judge 0 (twice).
+- Local evolve: top_fit stuck; re-promoted same wrap; LLM mutate crashed on `content: null`.
+- Fix: archive-mode micro-mutate; forbid “topic and actors only” + hot specimen snippets; promote/merge only if fit > baseline; clean factors; mid seeds (`archive_mid_*`); default submission = ARCHIVE_ENTRY (claims, not topic-only).
+- Next VPS: `baseline-input --mode factors` on mids → `evolve-factors --local-only …` → eval-one only if allow + new wording.
+
 
 
 
