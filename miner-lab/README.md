@@ -16,6 +16,14 @@ Iterate a Surface Area 1 **TEMPLATE** submission on a VPS, keep **detailed local
 
 ## VPS setup (once)
 
+If `docker-up.sh` fails at `pnpm build:plugin-sdk:dts` with `@grammyjs/types` errors, pull latest
+repo (uses `pnpm build:lean` in `Dockerfile.lean`) and rebuild:
+
+```bash
+bash docker-down.sh 2>/dev/null || true
+bash docker-up.sh --no-cache
+```
+
 ```bash
 # On the VPS, from repo root
 cp .env.example .env

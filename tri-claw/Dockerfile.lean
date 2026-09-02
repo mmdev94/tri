@@ -28,7 +28,9 @@ COPY --chown=node:node . .
 # a2ui.bundle.js is gitignored; stub it so bundle-a2ui.sh takes the prebuilt-bundle path
 # (vendor/apps sources are excluded by .dockerignore, so this is the designed fallback).
 RUN mkdir -p src/canvas-host/a2ui && touch src/canvas-host/a2ui/a2ui.bundle.js
-RUN pnpm build
+# Skip build:plugin-sdk:dts — lean eval does not need channel/plugin-sdk .d.ts generation,
+# and unfrozen installs can pull @grammyjs/types versions that fail tsc on telegram/discord.
+RUN pnpm build:lean
 ENV OPENCLAW_PREFER_PNPM=1
 RUN pnpm ui:build
 
