@@ -23,10 +23,12 @@ RESULTS_ROOT="$ROOT/results/miner-lab"
 SHARED="$LAB/shared"
 
 SUBMISSION="$LAB/submission.json"
-# Prefer live challenge pack when present (synced from apiv2); else tri-check sample rubric.
-if [[ -f "$LAB/challenges/P3-007-questions.json" ]]; then
-  QUESTIONS="$LAB/challenges/P3-007-questions.json"
-else
+# Prefer newest synced challenge pack; else tri-check sample rubric (often stale).
+QUESTIONS=""
+if [[ -d "$LAB/challenges" ]]; then
+  QUESTIONS="$(ls -1t "$LAB"/challenges/*-questions.json 2>/dev/null | head -n1 || true)"
+fi
+if [[ -z "$QUESTIONS" || ! -f "$QUESTIONS" ]]; then
   QUESTIONS="$TRI_CHECK/data/questions.json"
 fi
 LABEL=""
@@ -107,6 +109,7 @@ log() { printf '[%s] %s\n' "$(date -u +%H:%M:%S)" "$*" | tee -a "$RUN_DIR/consol
 log "=== miner-lab run $RUN_ID ==="
 log "repo=$ROOT host=$HOST git=$GIT_SHA mode=$MODE"
 log "submission=$SUBMISSION"
+log "questions=$QUESTIONS"
 
 # --- health ---
 health_check() {

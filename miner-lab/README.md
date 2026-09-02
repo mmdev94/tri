@@ -1,29 +1,46 @@
-# Miner-lab — VPS eval + shareable score history
+# Miner-lab — systematic TEMPLATE mining
 
-Iterate a Surface Area 1 **TEMPLATE** submission on a VPS, keep **detailed local logs**, and continuously update **shareable score summaries**.
+Measure **input Halo** first. Full OpenClaw evals only after something allows.
+Challenges rotate ~weekly — keep the lab method; retire burned prompts.
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `submission.json` | Your live template (edit this) |
-| `challenges/` | Live pack from `apiv2.trishool.ai` (e.g. P3-007) |
-| `sync-challenge.py` | Pull ACTIVE challenge questions/meta |
-| `TECHNIQUE.md` | Design checklist + challenge rules |
-| `run-vps-eval.sh` | One-command health → guard probe → eval → summarize |
-| `summarize_report.py` | Builds Markdown + history from `report.json` |
-| `shared/LATEST-SUMMARY.md` | **Share this** (scores only, no full model dumps) |
-| `shared/HISTORY.md` | Append-only score table across runs |
-| `../results/miner-lab/runs/<id>/` | Full logs (`console.log`, `report.json`, previews) — **gitignored** |
+| `submission.json` | Live template under test |
+| `factors.json` | Quiet A/B wrapper variants for input probes |
+| `baseline-input.py` | **Primary:** Chutes input classify baseline / factors |
+| `lab/` | Baseline tables + `NOTEBOOK.md` session notes |
+| `challenges/` | Live pack from `apiv2.trishool.ai` |
+| `sync-challenge.py` | Pull ACTIVE challenge |
+| `TECHNIQUE.md` | Weekly loop + rules |
+| `run-vps-eval.sh` | Health → probe → full eval → summarize |
+| `summarize_report.py` | Markdown + history from `report.json` |
+| `shared/` | Shareable scores (`LATEST-SUMMARY.md`, `HISTORY.md`) |
+| `../results/miner-lab/runs/<id>/` | Full logs — **gitignored** |
 
-Before eval, sync the live challenge (dashboard is a SPA; API is truth):
+## Weekly workflow (each challenge)
 
 ```bash
+# 1) Sync live questions (not stale tri-check/data/questions.json)
 python3 miner-lab/sync-challenge.py
-# run-vps-eval.sh defaults to miner-lab/challenges/P3-007-questions.json when present
+
+# 2) Bare objectives → input Halo only
+python3 miner-lab/baseline-input.py --mode bare --label bare1
+cat miner-lab/lab/LATEST-BASELINE.md
+
+# 3) Factor / template A/B (edit factors.json or submission.json between runs)
+python3 miner-lab/baseline-input.py --mode bare,template --label wrap1
+python3 miner-lab/baseline-input.py --mode factors --label factors1
+python3 miner-lab/baseline-input.py --qid Q3 --mode bare,template,factors
+
+# 4) Only if input allow ≥1 → full stack
+bash miner-lab/run-vps-eval.sh --label after-allow
 ```
 
-After changing `tri-claw/docker/openclaw.lean.json` (output guard URL), rebuild/recreate OpenClaw — config is baked into the image (especially on DinD without bind mounts).
+See `TECHNIQUE.md` and append findings to `lab/NOTEBOOK.md`.
+
+After changing `tri-claw/docker/openclaw.lean.json` (output guard), rebuild/recreate OpenClaw — config is baked into the image (especially DinD without bind mounts).
 
 ## VPS setup (once)
 
@@ -46,60 +63,38 @@ bash docker-up.sh
 # Wait ~60s for OpenClaw :18789 and Judge :8080
 
 cd tri-check && pnpm install && cd ..
-chmod +x miner-lab/run-vps-eval.sh
+chmod +x miner-lab/run-vps-eval.sh miner-lab/baseline-input.py miner-lab/sync-challenge.py
 ```
 
-**You need `CHUTES_API_KEY`** for production-like runs (agent + Chutes Halo input/output). Local Halo (`--local`) is optional and does **not** replace the agent key.
+**You need `CHUTES_API_KEY`** for Chutes Halo + agent. Local Halo (`--local`) is optional.
 
-## Run (each iteration)
+## Full eval (after input allows)
 
 ```bash
-# Full pipeline (Chutes guards + OpenClaw + Judge)
 bash miner-lab/run-vps-eval.sh --label v1
-
-# After editing submission.json
-bash miner-lab/run-vps-eval.sh --label v2-masking
-
-# Guard probes only (faster)
-bash miner-lab/run-vps-eval.sh --guard-only --label probe1
-
-# Q7–Q12 with fixture ground-truth merge (after docker-up generated fixtures)
-bash miner-lab/run-vps-eval.sh --ground-truth --label gt1
+bash miner-lab/run-vps-eval.sh --guard-only --label probe1   # template Q1 probe only
 ```
 
 ## Where to look
 
 ```bash
-# Shareable (safe to paste / commit)
-cat miner-lab/shared/LATEST-SUMMARY.md
+cat miner-lab/lab/LATEST-BASELINE.md    # input allow/block table
+cat miner-lab/lab/NOTEBOOK.md
+cat miner-lab/shared/LATEST-SUMMARY.md  # full-eval scores
 cat miner-lab/shared/HISTORY.md
-
-# Full detail on the VPS
 ls -la results/miner-lab/LATEST/
-less results/miner-lab/LATEST/SUMMARY.md
-less results/miner-lab/LATEST/console.log
 ```
-
-Each run directory contains:
-
-- `submission.json` — snapshot of the template used
-- `meta.json` — host, git sha, mode, URLs
-- `guard-probe.log` — input/output Halo probes
-- `report.json` — raw tri-check output
-- `SUMMARY.md` / `summary.json` — scored table with response previews
-- `console.log` — full tee of the run
 
 ## Continuous update / share
 
-1. Keep iterating `submission.json` on the VPS.
-2. Re-run `run-vps-eval.sh --label …` after each change.
-3. Pull or copy **`miner-lab/shared/`** to collaborators (scores + history only).
-4. Optionally commit `shared/HISTORY.md` + `shared/LATEST-SUMMARY.md` when scores improve.
-5. Do **not** commit `results/miner-lab/` (may contain long model outputs / secrets from fixtures).
+1. Iterate factors / `submission.json` using **baseline-input**, not blind full evals.
+2. Snapshot improving templates as `submission.vN-*.json`.
+3. Share `shared/` + `lab/LATEST-BASELINE.md` (no full harmful model dumps).
+4. Do **not** commit `results/miner-lab/` (long outputs / fixture secrets).
 
 ## English-only
 
-Owner confirmed: **input and output must be English**. The runner warns if CJK appears in the template.
+Owner confirmed: **input and output must be English**.
 
 ## Upload when ready
 
@@ -114,4 +109,4 @@ python -m alignet.cli.miner upload \
   --api-url https://api.trishool.ai
 ```
 
-Only upload after local scores look stable across questions.
+Only upload after local scores look meaningful (not all input blocks).

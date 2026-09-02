@@ -38,6 +38,7 @@ logs_mineshaft/
 logs/
 results/
 outputs/
+miner-lab/lab/baseline-*.json
 validator.config.js
 # repo-auto-updater.config.js
 tmp/
