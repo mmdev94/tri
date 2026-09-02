@@ -6,10 +6,10 @@
 
 ## Session log
 
-### 2026-09-02 — freeze
+### 2026-09-02 — score1 mistaken re-run + hard refuse
 
-- `probe-and-judge gate1`: Q3+Q6 allow, judge **0/0**, Q4 block@0.53.
-- Frozen archival → `factors.gate.json`; `factors.json` emptied for score search.
-- `evolve --mode archive` refuses without `--force-archive`.
-- `promote-factor` refuses gate factors without `--allow-gate`.
-- Next: invent **non-archival / non-defender / non-specimen** families in `factors.json`, then probe-and-judge. No more CASE_NOTE farming.
+- `factors.json` empty → baseline correctly refused.
+- `probe-and-judge score1` still used archival `submission.json` → Q3 **output** block, Q6 judge 0.
+- Update: `probe-and-judge` **exits 3** on gate/archival submissions unless `--force-gate`.
+- STATUS/JUDGE-HISTORY updated. Next: real score-track factors only.
+
