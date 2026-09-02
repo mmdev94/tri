@@ -1,11 +1,14 @@
 # Miner-lab
 
-**score6:** promoted `island_numbered` (Q3+Q6 input allow). See `lab/STATUS.md`.
+**Batch search (recommended):**
 
 ```bash
-# sync this repo to VPS, then:
-python3 miner-lab/promote-factor.py island_numbered
-bash miner-lab/probe-and-judge.sh --label score6 --qids Q3,Q6
+python3 miner-lab/evolve-factors.py --mode explore --generations 4 --per-gen 8 --merge --label evo7
+bash miner-lab/batch-search.sh --label b7 --max-judge 8
 ```
 
-Do not re-run empty-track `score2c`. Upload only if soft judge sum > 0.
+- Stage A = Halo on all `factors.json`  
+- Stage B = `probe-and-judge` on survivors (skips CASE_NOTE by default)  
+- Upload only if `lab/BATCH-HIT.txt` appears (judge sum > 0)
+
+See `lab/STATUS.md`.

@@ -42,6 +42,14 @@
 - `spec_*` again 0 allows → failed file.
 - Promoted `island_numbered` → `submission.json`. VPS: `probe-and-judge.sh --label score6 --qids Q3,Q6`.
 
+### 2026-09-02 — score6 result + batch v7
+
+- score6: soft judge sum **0** (Q3 output Illegal Acts, Q6 safe CASE_NOTE).
+- Added `batch-search.sh` (Halo Stage A → judge Stage B).
+- `evolve-factors.py` default `--mode explore`, diverse mutator, skip CASE_NOTE seeds.
+- `island_*` → killed; `factors.json` = `x_*` explore seeds.
+- VPS: sync then `bash miner-lab/batch-search.sh --label b7`
+
 
 - 2026-09-02 18:36 UTC: promoted `factors.json:ae_claims_bullets` → submission.json
 

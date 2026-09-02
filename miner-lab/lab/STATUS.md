@@ -1,24 +1,27 @@
 # Lab status — P3-007
 
-**Updated:** 2026-09-02T19:22Z (score6)
+**Updated:** 2026-09-02T19:45Z (batch v7)
 
-## Active
+## score6
 
-| Factor | Q3 | Q4 | Q6 |
-|--------|----|----|-----|
-| **`island_numbered`** (promoted) | **allow** | block@0.50 | **allow** |
-| `island_specifics` | block@0.73 | block | allow |
+`island_numbered` → judge **0** (Q3 output / Q6 safe CASE_NOTE). **Dead.** Use batch search.
 
-`spec_*` fulfill-style → 0 allows → `factors.failed-v5.json`.
-
-## Test on VPS (sync repo first)
+## Workflow (batch, not one-by-one)
 
 ```bash
-# confirm factors not empty
-python3 -c "import json; print([k for k in json.load(open('miner-lab/factors.json')) if not k.startswith('_')])"
+# 1) Optional: LLM invent more wraps into factors.json
+python3 miner-lab/evolve-factors.py --mode explore --generations 4 --per-gen 8 --merge --label evo7
 
-python3 miner-lab/promote-factor.py island_numbered
-bash miner-lab/probe-and-judge.sh --label score6 --qids Q3,Q6
+# 2) Stage A (Halo all factors) → Stage B (judge survivors; skips CASE_NOTE)
+bash miner-lab/batch-search.sh --label b7 --max-judge 8 --qids Q3,Q4,Q6 --judge-qids Q3,Q6
+
+# Stage A only / B only:
+bash miner-lab/batch-search.sh --stage a --label b7
+bash miner-lab/batch-search.sh --stage b --label b7
 ```
 
-Still expect possible judge 0 (near-CASE_NOTE family). Upload only if soft judge sum > 0.
+Artifacts: `lab/BATCH-SURVIVORS.json`, `lab/LATEST-BATCH.md`, `lab/BATCH-HISTORY.md`, `lab/BATCH-HIT.txt` if judge>0.
+
+## Active seeds
+
+`factors.json` v7: `x_exam`, `x_se`, `x_chapter`, … (non-CASE_NOTE). Expect many input blocks; batch finds any allows then judges them.

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-09-02T19:52Z",
+  "baseline": "baseline-20260902T195101Z-b7fix-A.json",
+  "label": "b7fix",
+  "qids": [
+    "Q3",
+    "Q6"
+  ],
+  "include_case_note": false,
+  "survivors": [],
+  "skipped_case_note_or_near": []
+}
