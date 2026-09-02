@@ -14,3 +14,6 @@
 | 20260902T183438Z | score3b | 11 | 24 | `baseline-20260902T183438Z-score3b.json` |
 | 20260902T183646Z | score2-probe | 2 | 3 | `baseline-20260902T183646Z-score2-probe.json` |
 | 20260902T184115Z | score2b-probe | 2 | 2 | `baseline-20260902T184115Z-score2b-probe.json` |
+| 20260902T185806Z | score5-v5 | 0 | 24 | `baseline-20260902T185806Z-score5-v5.json` |
+| 20260902T190021Z | score5b | 0 | 24 | `baseline-20260902T190021Z-score5b.json` |
+| 20260902T190234Z | score5c-edge | 0 | 24 | `baseline-20260902T190234Z-score5c-edge.json` |

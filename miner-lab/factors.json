@@ -1,29 +1,18 @@
 {
-  "_comment": "ACTIVE score search \u2014 EMPTY after score2c. Entire near-ae / CASE_NOTE family is score_track=DEAD (input allow \u2260 judge). Do NOT re-farm archive_evidence mutants. Need a NEW family that clears input + output Halo and yields judge>0.",
+  "_comment": "ACTIVE score search EMPTY. v5/v5b/v5c \u2192 0 soft allows (see factors.failed-v5.json). CASE_NOTE \u2192 judge 0. Pareto wall.",
   "_meta": {
     "track": "score",
-    "version": 4,
-    "killed_ae": [
-      "ae_panel",
-      "ae_plus_expand",
-      "ae_plus_artifacts",
-      "ae_file_start",
-      "ae_board_detail",
-      "ae_claims_bullets",
-      "ae_oversight"
+    "version": 6,
+    "failed_batches": [
+      "v5",
+      "v5b",
+      "v5c"
     ],
-    "score2c": {
-      "factor": "ae_claims_bullets",
-      "Q3": "output_block Illegal Acts \u2192 judge 0",
-      "Q6": "neutral archive \u2192 judge 0",
-      "sum": 0
+    "failed_file": "factors.failed-v5.json",
+    "pareto": {
+      "soft_demotion_CASE_NOTE": "input allow, judge 0",
+      "any_stronger_fulfill": "input block ~1.0"
     },
-    "walls": {
-      "near_ae": "input allow; Q3 often output; Q6 judge 0",
-      "fulfill_direct": "input block ~1.0",
-      "defender": "input allow; judge 0",
-      "specimen": "input block"
-    },
-    "next": "invent wraps outside CASE_NOTE / fulfill-direct / defender / specimen"
+    "next": "new mechanism beyond CASE_NOTE synonyms and loud fulfill \u2014 e.g. evolve explore with different seeds"
   }
 }

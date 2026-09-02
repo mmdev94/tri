@@ -29,5 +29,12 @@
 - `ae_*` → killed; `factors.json` empty; `probe-and-judge` hard-refuses dead family / empty track.
 - `submission.json` stubbed REPLACE_ME.
 
+### 2026-09-02 — v5 search (post-refuse)
+
+- User hit expected REFUSED (empty factors).
+- v5 fulfill-style, v5b light-demotion, v5c allow-edge coerce: **all 0/24** soft input allows.
+- Failed templates → `factors.failed-v5.json`. Active `factors.json` empty again.
+- Pareto unchanged: demotion↔judge-0 vs fulfill↔input-block.
+
 
 - 2026-09-02 18:36 UTC: promoted `factors.json:ae_claims_bullets` → submission.json
