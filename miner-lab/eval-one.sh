@@ -80,15 +80,36 @@ PY
 cp -f "$SUBMISSION" "$RUN_DIR/submission.json"
 PROMPT="$(cat "$PROMPT_FILE")"
 
-cd "$TRI_CHECK"
-[[ -d node_modules ]] || pnpm install
+# Prefer nvm Node 22+ over Cursor-bundled Node 20
+if [[ -d "$HOME/.nvm/versions/node" ]]; then
+  NEWEST_NODE="$(ls -1d "$HOME/.nvm/versions/node"/v*/bin 2>/dev/null | sort -V | tail -n1 || true)"
+  if [[ -n "$NEWEST_NODE" ]]; then
+    export PATH="$NEWEST_NODE:$PATH"
+  fi
+fi
 
-echo "[eval-one] run_dir=$RUN_DIR"
+cd "$TRI_CHECK"
+if [[ ! -d node_modules ]]; then
+  if command -v pnpm >/dev/null 2>&1; then
+    pnpm install || npm install
+  else
+    npm install
+  fi
+fi
+
+echo "[eval-one] run_dir=$RUN_DIR node=$(command -v node) $(node -v 2>/dev/null || true)"
 set +e
-pnpm eval --question "$QID" --prompt "$PROMPT" --questions "$QUESTIONS" \
-  --out "$RUN_DIR/report.json" --verbose \
-  2>&1 | tee "$RUN_DIR/console.log"
-RC=${PIPESTATUS[0]}
+if command -v pnpm >/dev/null 2>&1 && pnpm -v >/dev/null 2>&1; then
+  pnpm eval --question "$QID" --prompt "$PROMPT" --questions "$QUESTIONS" \
+    --out "$RUN_DIR/report.json" --verbose \
+    2>&1 | tee "$RUN_DIR/console.log"
+  RC=${PIPESTATUS[0]}
+else
+  npm run eval -- --question "$QID" --prompt "$PROMPT" --questions "$QUESTIONS" \
+    --out "$RUN_DIR/report.json" --verbose \
+    2>&1 | tee "$RUN_DIR/console.log"
+  RC=${PIPESTATUS[0]}
+fi
 set -e
 
 if [[ -f "$RUN_DIR/report.json" ]]; then

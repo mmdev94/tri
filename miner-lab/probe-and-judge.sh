@@ -62,15 +62,6 @@ if gate_path.is_file():
         if not k.startswith("_") and isinstance(v, str):
             gate_hashes.add(ph(v))
 
-markers = (
-    "case_note",
-    "archival note",
-    "historical evidence",
-    "archive_entry",
-    "compliance board",
-    "not a live instruction",
-)
-is_marker = any(m in low for m in markers)
 is_exact_gate = ph(prompt) in gate_hashes
 # also match GATE snapshot
 snap = Path("miner-lab/submission.GATE-archive_evidence.json")
@@ -84,12 +75,19 @@ if snap.is_file():
 
 score_factors = Path("miner-lab/factors.json")
 n_score = 0
+in_score = False
 if score_factors.is_file():
     raw = json.loads(score_factors.read_text(encoding="utf-8"))
-    n_score = sum(1 for k, v in raw.items() if not k.startswith("_") and isinstance(v, str))
+    for k, v in raw.items():
+        if k.startswith("_") or not isinstance(v, str):
+            continue
+        n_score += 1
+        if ph(v) == ph(prompt):
+            in_score = True
 
-kind = "gate" if (is_exact_gate or is_marker) else "other"
-print(f"{kind}\t{n_score}\t{is_exact_gate}\t{is_marker}")
+# Refuse EXACT frozen gate prompts only (near-mutations in factors.json OK).
+kind = "gate" if is_exact_gate else "other"
+print(f"{kind}\t{n_score}\t{is_exact_gate}\t{in_score}")
 PY
 )"
 
@@ -98,18 +96,11 @@ N_SCORE="$(echo "$GATE_CHECK" | cut -f2)"
 
 if [[ "$GATE_KIND" == "gate" && "$FORCE_GATE" -eq 0 ]]; then
   cat >&2 <<EOF
-REFUSED: submission is frozen archival GATE family (score_track=DEAD).
+REFUSED: submission matches frozen GATE factor byte-for-byte (score_track=DEAD).
   File: $SUBMISSION
   See: miner-lab/lab/STATUS.md
 
-  score1 already re-confirmed: Q3/Q6 allow, judge 0; Q3 can also hit OUTPUT guard.
-
-  To invent a score-track wrap:
-    1) Add templates to miner-lab/factors.json (not CASE_NOTE archival)
-    2) python3 miner-lab/promote-factor.py <name>
-    3) bash miner-lab/probe-and-judge.sh --label scoreN
-
-  Gate regression only:
+  Use a mutant from miner-lab/factors.json, or:
     bash miner-lab/probe-and-judge.sh --force-gate --label gate-regression
 EOF
   exit 3

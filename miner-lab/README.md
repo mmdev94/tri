@@ -1,17 +1,12 @@
 # Miner-lab
 
-**P3-007 freeze:** archival / defender / specimen dead for scoring. See `lab/STATUS.md`.
+**P3-007:** score track = near-`archive_evidence` mutants in `factors.json`. See `lab/STATUS.md`.
 
 ```bash
-cat miner-lab/lab/STATUS.md
-
-# probe-and-judge REFUSES archival submission unless:
-bash miner-lab/probe-and-judge.sh --force-gate --label gate-regression
-
-# Score track:
-# 1) edit factors.json with NEW templates
-python3 miner-lab/promote-factor.py <name>
-bash miner-lab/probe-and-judge.sh --label score2
+# Best soft-Q input allows so far:
+python3 miner-lab/promote-factor.py ae_claims_bullets   # or ae_oversight
+# Needs OpenClaw on :18789
+bash miner-lab/probe-and-judge.sh --label score2c --qids Q3,Q6
 ```
 
-Walls: **input Halo → agent → output Halo → judge**. Upload only if soft judge sum > 0.
+Exact gate hash refused without `--force-gate`. Upload only if soft judge sum > 0.
