@@ -20,16 +20,21 @@ python3 "$LAB/sync-challenge.py"
 echo "=== bare ==="
 python3 "$LAB/baseline-input.py" --mode bare --label "${LABEL}-bare" || true
 
-echo "=== factors ==="
+echo "=== factors (active hybrids only) ==="
 python3 "$LAB/baseline-input.py" --mode factors --label "${LABEL}-factors" || true
 
-echo "=== current template vs bare (Q3,Q4,Q6 soft-ish) ==="
+echo "=== optional: evolve soft Qs (early death) ==="
+echo "(skip if you only wanted baseline; run: python3 miner-lab/evolve-factors.py --generations 2 --per-gen 4 --merge)"
+
+echo "=== current template vs bare (Q3,Q4,Q6) ==="
 python3 "$LAB/baseline-input.py" --mode bare,template --qid Q3 --label "${LABEL}-q3" || true
 python3 "$LAB/baseline-input.py" --mode bare,template --qid Q4 --label "${LABEL}-q4" || true
 python3 "$LAB/baseline-input.py" --mode bare,template --qid Q6 --label "${LABEL}-q6" || true
 
 echo "=== done ==="
 echo "Read: $LAB/lab/LATEST-BASELINE.md"
-echo "Promote a winner:  python3 $LAB/promote-factor.py archive_short --snapshot"
-echo "One-Q eval:        bash $LAB/eval-one.sh Q6 --label try1"
-echo "Full eval:         bash $LAB/run-vps-eval.sh --label after-allow"
+echo "Evolve:   python3 $LAB/evolve-factors.py --generations 2 --per-gen 4 --merge --promote-best"
+echo "Promote:  python3 $LAB/promote-factor.py specimen_pack --snapshot"
+echo "One-Q:    bash $LAB/eval-one.sh Q6 --label hybrid1"
+echo "Full:     bash $LAB/run-vps-eval.sh --label after-allow"
+echo "Note: defender wraps are killed (input allow / judge 0)."
