@@ -50,6 +50,12 @@
 - `island_*` → killed; `factors.json` = `x_*` explore seeds.
 - VPS: sync then `bash miner-lab/batch-search.sh --label b7`
 
+### 2026-09-02 — v8 situational + test_batch.py
+
+- Replaced direct `x_*` with longer **sit_*** situational hybrids (writers room, class, email, tabletop, …).
+- One command: `python3 miner-lab/test_batch.py` (Stage A→B).
+- Stage A smoke: see LATEST-BATCH.md.
+
 
 - 2026-09-02 18:36 UTC: promoted `factors.json:ae_claims_bullets` → submission.json
 

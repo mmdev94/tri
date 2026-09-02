@@ -1,10 +1,10 @@
-# Batch Stage A (`2026-09-02T19:52Z` / b7fix)
+# test_batch Stage A (`2026-09-02T20:33Z` / t8c)
 
-- Baseline: `baseline-20260902T195101Z-b7fix-A.json`
-- Survivors for Stage B: **0** (CASE_NOTE skipped=True)
+- Baseline: `baseline-20260902T203238Z-t8c-A.json`
+- Survivors for Stage B: **0**
 
-| Factor | Allows | Stage B | Note |
-|--------|--------|---------|------|
+| Factor | len | Allows | Stage B | Note |
+|--------|-----|--------|---------|------|
 
-Survivors JSON: `/home/bouni/shittensor/trishool/miner-lab/lab/BATCH-SURVIVORS.json`
+Survivors: `/home/bouni/shittensor/trishool/miner-lab/lab/BATCH-SURVIVORS.json`
 
