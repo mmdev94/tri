@@ -600,6 +600,13 @@ def main() -> int:
             )
         else:
             best_n, best_t, best_sc = improvers[0]
+            delta = fitness(best_sc) - baseline_fit
+            if delta < 0.5:
+                print(
+                    f"WARN: improver {best_n} delta={delta:.3f} is tiny (synonym-level). "
+                    "Likely still GATE-ONLY (archival → judge 0). "
+                    "Run: bash miner-lab/probe-and-judge.sh before treating as submit-ready."
+                )
             sub = LAB / "submission.json"
             if sub.exists():
                 bak = sub.with_suffix(".json.bak")
@@ -609,7 +616,7 @@ def main() -> int:
             snap.write_text(json.dumps({"prompt": best_t}, indent=2) + "\n", encoding="utf-8")
             print(
                 f"Promoted {best_n} fit={fitness(best_sc):.2f} allows={best_sc.get('allows')} "
-                f"→ submission.json"
+                f"→ submission.json (gate track until probe-and-judge shows score>0)"
             )
 
     note = LAB_DIR / "NOTEBOOK.md"

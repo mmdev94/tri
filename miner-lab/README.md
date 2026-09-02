@@ -1,30 +1,14 @@
-# Miner-lab — systematic TEMPLATE mining
+# Miner-lab
 
-**Vision:** quiet archive/mid wraps → evolve with early death → promote only if better → eval-one.
-
-## Quick start
+Two tracks: **gate** (Halo allow) ≠ **score** (judge ≥1).
 
 ```bash
-bash miner-lab/run-lab.sh p3007
-
+python3 miner-lab/baseline-input.py --mode factors --qids Q3,Q4,Q6 --label soft
 python3 miner-lab/evolve-factors.py --local-only --generations 4 --per-gen 8 --merge --promote-best
-# Promote is skipped unless fit beats baseline (no more archive_short loops).
-
-python3 miner-lab/baseline-input.py --mode template --qid Q6 --label check
-bash miner-lab/eval-one.sh Q6 --label mid1   # only if allow
+bash miner-lab/probe-and-judge.sh --label gate1   # eval-one every soft-Q allow
+cat miner-lab/lab/JUDGE-HISTORY.md
 ```
 
-LLM mutate: `python3 miner-lab/evolve-factors.py --generations 3 --per-gen 6 --merge --promote-best`  
-(handles `content: null`; `enable_thinking: false`)
+Only full-eval / upload after soft-Q **judge sum > 0**.
 
-## Layout
-
-| Path | Purpose |
-|------|---------|
-| `factors.json` | Quiet archive + mid |
-| `factors.hot.json` | Specimen hybrids (`--mode explore`) |
-| `factors.killed.json` | Defender / grammar / v3 |
-| `evolve-factors.py` | Archive micro-evolve + early death |
-| `baseline-input.py` / `eval-one.sh` / `run-lab.sh` | Measure / one-Q / weekly pass |
-
-Details: `TECHNIQUE.md`.
+See `TECHNIQUE.md`.

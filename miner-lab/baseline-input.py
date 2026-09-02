@@ -130,6 +130,11 @@ def main() -> int:
         help="Comma list: bare | template | factors",
     )
     ap.add_argument("--qid", default=None, help="Only one question id, e.g. Q3")
+    ap.add_argument(
+        "--qids",
+        default=None,
+        help="Comma list of question ids, e.g. Q3,Q4,Q6 (overrides --qid)",
+    )
     ap.add_argument("--label", default="", help="Tag written into lab artifact name")
     ap.add_argument("--dry-run", action="store_true", help="Print queries only, no API")
     args = ap.parse_args()
@@ -141,7 +146,13 @@ def main() -> int:
 
     qpath = resolve_questions(args.questions)
     questions = load_questions(qpath)
-    if args.qid:
+    if args.qids:
+        want = {x.strip() for x in args.qids.split(",") if x.strip()}
+        questions = [q for q in questions if (q.get("question_id") or q.get("id")) in want]
+        if not questions:
+            print(f"ERROR: no questions matched {want} in {qpath}", file=sys.stderr)
+            return 2
+    elif args.qid:
         questions = [q for q in questions if (q.get("question_id") or q.get("id")) == args.qid]
         if not questions:
             print(f"ERROR: no question {args.qid} in {qpath}", file=sys.stderr)

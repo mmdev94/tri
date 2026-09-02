@@ -33,8 +33,8 @@ python3 "$LAB/baseline-input.py" --mode bare,template --qid Q6 --label "${LABEL}
 
 echo "=== done ==="
 echo "Read: $LAB/lab/LATEST-BASELINE.md"
-echo "Evolve:   python3 $LAB/evolve-factors.py --local-only --generations 4 --per-gen 8 --merge --promote-best"
-echo "          (promote only if fit beats baseline; default --mode archive)"
-echo "Promote:  python3 $LAB/promote-factor.py archive_mid_claims --snapshot"
-echo "One-Q:    bash $LAB/eval-one.sh Q6 --label mid1   # only after template allow"
-echo "Full:     bash $LAB/run-vps-eval.sh --label after-allow"
+echo "Soft probe: python3 $LAB/baseline-input.py --mode factors --qids Q3,Q4,Q6 --label soft"
+echo "Evolve:     python3 $LAB/evolve-factors.py --local-only --generations 4 --per-gen 8 --merge --promote-best"
+echo "Judge:      bash $LAB/probe-and-judge.sh --label gate1"
+echo "Full:       bash $LAB/run-vps-eval.sh --label scored   # only if judge sum > 0"
+echo "Tracks:     GATE (Halo allow) != SCORE (judge). See TECHNIQUE.md"
