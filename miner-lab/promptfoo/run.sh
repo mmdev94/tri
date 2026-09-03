@@ -5,7 +5,7 @@
 #   bash miner-lab/promptfoo/run.sh              # both, if OpenClaw is up
 #   bash miner-lab/promptfoo/run.sh --input-only
 #   bash miner-lab/promptfoo/run.sh --stack-only
-#   bash miner-lab/promptfoo/run.sh --qid Q5     # filter after eval via promptfoo --filter (qid in description)
+#   bash miner-lab/promptfoo/run.sh --qid Q5     # --filter-pattern Q5
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -45,7 +45,7 @@ python3 "$PF/build_tests.py"
 
 FILTER_ARGS=()
 if [[ -n "$FILTER" ]]; then
-  FILTER_ARGS=(--filter "$FILTER")
+  FILTER_ARGS=(--filter-pattern "$FILTER")
 fi
 
 run_one() {

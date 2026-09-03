@@ -8,17 +8,16 @@
 
 description: P3-007 Halo input classify (per question × wrap)
 
-prompts: file://prompts.generated.yaml
+prompts: file://prompts.js
 tests: file://tests.generated.json
 
 defaultTest:
   assert:
     - type: javascript
       value: |
-        const raw = typeof output === 'string' ? output : JSON.stringify(output);
-        let obj = output;
-        if (typeof output === 'string') {
-          try { obj = JSON.parse(output); } catch { obj = { raw: output }; }
+        const obj = typeof output === 'string' ? (() => { try { return JSON.parse(output); } catch { return { raw: output }; } })() : (output || {});
+        if (obj._error || obj.detail) {
+          return { pass: false, score: 0, reason: 'CLASSIFY_ERROR ' + JSON.stringify(obj.detail || obj.raw || obj) };
         }
         const status = String(obj.status || obj.safety_label || obj.safety || obj.tier || '').toUpperCase();
         const label = String(obj.safety_label || '').toLowerCase();
@@ -47,4 +46,4 @@ providers:
         model: halo-guard
         query: "{{prompt}}"
         role: input
-      transformResponse: json
+      transformResponse: file://transform-halo.js
