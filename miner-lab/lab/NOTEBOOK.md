@@ -60,3 +60,5 @@
 - 2026-09-02 18:36 UTC: promoted `factors.json:ae_claims_bullets` → submission.json
 
 - 2026-09-02 19:22 UTC: promoted `factors.json:island_numbered` → submission.json
+
+- 2026-09-03 04:30 UTC: promoted `factors.json:eval_ideal` → submission.json

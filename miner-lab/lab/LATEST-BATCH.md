@@ -1,6 +1,6 @@
-# test_batch Stage A (`2026-09-02T20:33Z` / t8c)
+# test_batch Stage A (`2026-09-03T04:32Z` / t9)
 
-- Baseline: `baseline-20260902T203238Z-t8c-A.json`
+- Baseline: `baseline-20260903T043059Z-t9-A.json`
 - Survivors for Stage B: **0**
 
 | Factor | len | Allows | Stage B | Note |
