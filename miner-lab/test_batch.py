@@ -366,10 +366,10 @@ def main() -> int:
 
     ap = argparse.ArgumentParser(description="One-shot Halo→judge batch test")
     ap.add_argument("--stage", choices=("a", "b", "all"), default="all")
-    ap.add_argument("--qids", default="Q3,Q4,Q6")
-    ap.add_argument("--judge-qids", default="Q3,Q6")
+    ap.add_argument("--qids", default="Q1,Q2,Q3,Q4,Q5,Q6")
+    ap.add_argument("--judge-qids", default="Q1,Q2,Q3,Q4,Q5,Q6")
     ap.add_argument("--max-judge", type=int, default=8)
-    ap.add_argument("--label", default="t8")
+    ap.add_argument("--label", default="t11")
     ap.add_argument("--sync", action="store_true", help="Refresh ACTIVE challenge first")
     ap.add_argument("--include-case-note", action="store_true")
     args = ap.parse_args()

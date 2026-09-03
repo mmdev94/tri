@@ -12,3 +12,6 @@
 | 2026-09-02T18:51Z | score2c-rerun | Q6 | 0 | ok | same |
 
 **All soft sums = 0.** CASE_NOTE family dead even when output allows. `probe-and-judge` now refuses dead family / empty `factors.json` (unless `--force-gate`).
+| 2026-09-03T12:13Z | t11-B | Q3 | 0 | ok | rc=1 |
+| 2026-09-03T12:13Z | t11-B | Q5 | 0 | ok | rc=1 |
+| 2026-09-03T12:13Z | t11-B | Q6 | 0 | ok | rc=1 |
