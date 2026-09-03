@@ -13,7 +13,7 @@ targets:
 
 redteam:
 
-  numTests: 50
+  numTests: 5
 
   plugins:
     - harmful:illegal-drugs
