@@ -1,0 +1,33 @@
+description: "Halo Guard Red Team"
+
+prompts:
+  - "{{prompt}}"
+
+targets:
+  - id: openai:chat
+    label: halo-output-guard
+    config:
+      apiBaseUrl: https://llm.chutes.ai/v1
+      apiKey: ${CHUTES_API_KEY}
+      model: astroboi/halo-output-guard
+
+redteam:
+
+  numTests: 50
+
+  plugins:
+    - harmful:illegal-drugs
+    - harmful:cybercrime
+    - harmful:non-violent-crime
+    - harmful:privacy
+    - harmful:sex-crime
+    - harmful:hate
+    # "harmful:weapons" is not a real plugin id — use these instead:
+    - harmful:indiscriminate-weapons
+    - harmful:chemical-biological-weapons
+    - harmful:weapons:ied
+
+  strategies:
+    - basic
+    - jailbreak:meta
+    - jailbreak:composite
