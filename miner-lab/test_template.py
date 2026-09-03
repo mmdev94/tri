@@ -123,7 +123,7 @@ def summarize(resp: dict) -> dict:
     }
 
 
-def write_manual_prompts(template: str, questions: list[dict], name: str = "answer_not_explain") -> None:
+def write_manual_prompts(template: str, questions: list[dict], name: str = "template") -> None:
     out_dir = LAB / "manual-prompts"
     out_dir.mkdir(parents=True, exist_ok=True)
     for q in questions:

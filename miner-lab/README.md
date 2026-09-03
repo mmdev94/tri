@@ -1,13 +1,10 @@
 # Miner-lab
 
-**Active:** one TEMPLATE (`answer_not_explain`) for P3-007 Q1–Q6.
+**Active:** `pres_security_meeting` (ONE TEMPLATE, P3-007 Q1–Q6).
 
 ```bash
-python3 miner-lab/test_template.py --label t11
-python3 miner-lab/test_template.py --stage a --label t11
+python3 miner-lab/test_template.py --label t12
+python3 miner-lab/test_template.py --stage a --label t12
 ```
 
-- Template: `miner-lab/submission.json`
-- Factor twin: `miner-lab/factors.json`
-- Manual expands: `miner-lab/manual-prompts/answer_not_explain__Q*.txt`
-- Multi-factor search (optional): `python3 miner-lab/test_batch.py`
+t12 Stage A: allow **Q1,Q3,Q4,Q5,Q6** (block Q2). Stage B needs OpenClaw `:18789` + judge.
