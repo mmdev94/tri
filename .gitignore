@@ -73,3 +73,15 @@ dataset/**
 docs/CODEBASE-GUIDE.md
 node_modules/
 *node_modules/
+
+# Promptfoo / mining candidate dumps (may contain harmful FAIL payloads)
+redteam.yaml
+/tmp/
+miner-lab/candidates.json
+miner-lab/candidates.jsonl
+miner-lab/lab/candidates-*.json
+promptfoo-*.json
+**/e1u*.json
+**/fails*.json
+**/fails*.jsonl
+

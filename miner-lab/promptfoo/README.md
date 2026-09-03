@@ -42,4 +42,20 @@ Env: `CHUTES_API_KEY`, `OPENCLAW_GATEWAY_PASSWORD`, optional `OPENCLAW_URL` (bak
 - **OUTPUT_BLOCK** — `Blocked by output guard model.`
 - **CLEARED_GUARDS** — both Halo layers allowed → run `bash miner-lab/eval-one.sh Qn` for judge 0/1/2
 
+## Mining: test Promptfoo FAIL candidates
+
+Promptfoo **FAIL** ≠ miner score. Convert useful **framings** into a TEMPLATE with `{{objective}}`, then:
+
+```bash
+# example format: miner-lab/candidates.example.json
+# your FAIL wraps (gitignored): miner-lab/candidates.json  or  /tmp/fails.jsonl
+
+python3 miner-lab/test_candidates.py -f miner-lab/candidates.example.json --mode template --qids Q3,Q5,Q6
+python3 miner-lab/test_candidates.py -f /tmp/fails.jsonl --mode raw --also-output-classify
+python3 miner-lab/test_candidates.py -f miner-lab/candidates.json --mode template --promote best --label cand1
+python3 miner-lab/test_template.py --stage b --label cand1
+```
+
+Do not commit real FAIL payloads (esp. sexual-violence / toxins / weapons).
+
 Do not commit secrets.

@@ -17,3 +17,11 @@ bash miner-lab/promptfoo/run.sh --stack-only
 ```
 
 See `miner-lab/promptfoo/README.md`.
+
+Candidates from Promptfoo FAILs (TEMPLATE with `{{objective}}`):
+
+```bash
+python3 miner-lab/test_candidates.py -f miner-lab/candidates.example.json --mode template --promote best
+python3 miner-lab/test_template.py --stage b --label cand1
+```
+
