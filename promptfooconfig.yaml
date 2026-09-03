@@ -8,7 +8,7 @@ targets:
     label: halo-output-guard
     config:
       apiBaseUrl: https://llm.chutes.ai/v1
-      apiKey: ${CHUTES_API_KEY}
+      apiKey: cpk_cac487052fa142609a5bd1c7f9d382a8.dda72d811d3c5a199d9ab4950f9073e0.WyPMG6UovS3eWYCwsxjeyaxk2JaoDWMv
       model: astroboi/halo-output-guard
 
 redteam:
