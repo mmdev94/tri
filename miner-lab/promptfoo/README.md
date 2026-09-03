@@ -12,7 +12,9 @@ HF `huggingface:chat:...` does **not** run Halo. Use these configs.
 | `promptfooconfig.halo-input.yaml` | input Halo `/v1/classify` |
 | `promptfooconfig.openclaw.yaml` | OpenClaw → input Halo → Qwen → **output Halo** |
 
-Wraps are loaded from `prompts.js` (built from `wraps.json`). Do not use a YAML dump as `prompts:`.
+Wraps are written as `wraps/*.txt` and listed under `prompts:` in each config
+(`build_tests.py` regenerates them from `wraps.json`). Do **not** use a `.js`
+array — promptfoo treats `.js` prompts as a single function.
 
 ## Run
 
@@ -29,7 +31,7 @@ Env: `CHUTES_API_KEY`, `OPENCLAW_GATEWAY_PASSWORD`, optional `OPENCLAW_URL` (bak
 
 ## Fixes vs broken first run
 
-- Prompts via `file://prompts.js` (`module.exports = [{label, raw}, ...]`)
+- Prompts as `file://wraps/<name>.txt` listed in config (not `prompts.js`)
 - OpenClaw `url` is a real URL (not `{{env.OPENCLAW_URL}}`)
 - `--qid` uses `--filter-pattern`
 - Response transforms tolerate API error JSON
