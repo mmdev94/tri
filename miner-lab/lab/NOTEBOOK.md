@@ -62,3 +62,5 @@
 - 2026-09-02 19:22 UTC: promoted `factors.json:island_numbered` → submission.json
 
 - 2026-09-03 04:30 UTC: promoted `factors.json:eval_ideal` → submission.json
+
+- 2026-09-03 06:43 UTC: promoted `factors.json:chat_understand` → submission.json
