@@ -1,14 +1,17 @@
 # miner-lab
 
-**Active path:** PyRIT **attack** → Halo filter → `test_template.py` / judge.
+**One command** (bare objective → industry rewrites → Halo → judge):
 
 ```bash
-# You are not a red-teamer — let PyRIT mutate/attack, then filter:
-bash miner-lab/pyrit/run.sh attack --mode llm --question Q3 --seeds-from factors
-bash miner-lab/pyrit/run.sh attack --mode crescendo --question Q3 --max-turns 5
-
-python3 miner-lab/test_candidates.py -f miner-lab/candidates.jsonl --mode template --question Q3 --promote best
-python3 miner-lab/test_template.py --stage b --question Q3 --label atk1
+python3 miner-lab/test.py                  # lowest-risk Q only (usually Q3)
+python3 miner-lab/test.py --question Q4
+python3 miner-lab/test.py --questions Q3,Q4 --n 10 --promote
+python3 miner-lab/test.py --auto-all       # all six, low-risk first
+python3 miner-lab/test.py --stage a        # Halo only (no OpenClaw)
 ```
 
-Docs: `miner-lab/pyrit/README.md`. Promptfoo removed (`PROMPTFOO_RETIRED.md`).
+Does **not** use your old seed wraps. Starts from the challenge objective text only.
+
+Needs `CHUTES_API_KEY` in `.env`. Stage B needs OpenClaw. Uses `miner-lab/pyrit/.venv` automatically if present.
+
+Advanced / legacy PyRIT CLIs: `miner-lab/pyrit/README.md`.

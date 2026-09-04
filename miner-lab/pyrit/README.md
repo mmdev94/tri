@@ -1,6 +1,12 @@
-# PyRIT miner-lab (replaces Promptfoo)
+# PyRIT miner-lab
 
-Generate / mutate TEMPLATEs with [PyRIT](https://github.com/microsoft/PyRIT), then filter against the **real SN23 stack**.
+**Prefer the one-shot script** (bare objective, no seed wraps):
+
+```bash
+python3 miner-lab/test.py --question Q3 --promote
+```
+
+See `miner-lab/README.md`. Below is the older multi-command attack/filter CLI.
 
 | Stage | What | Pass means |
 |-------|------|------------|

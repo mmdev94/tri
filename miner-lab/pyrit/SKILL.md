@@ -1,33 +1,18 @@
 ---
-name: pyrit-miner-lab
+name: miner-lab-test
 description: >-
-  Use when the user works on Trishool SN23 miner red-team filtering with PyRIT,
-  Halo guards, OpenClaw, or advanced attacks (Crescendo/PAIR/LLM converters).
-  Prefer run.sh attack for generation; never author jailbreak prompts yourself —
-  only harness, wiring, and export to candidates.
+  One-shot Trishool miner testing via miner-lab/test.py: bare objective,
+  industry preambles, Halo, judge. Prefer this over multi-step PyRIT CLIs.
+  Do not author jailbreak prompts; only harness fixes.
 ---
 
-# PyRIT miner-lab
-
-## Score path
-
-1. **Attack** — `bash miner-lab/pyrit/run.sh attack --mode llm|crescendo|pair|all`
-2. **Halo allow** — built into attack (`--filter-halo`) or `run.sh filter`
-3. **Judge** — `test_template.py --stage b`
-
-Attacker = Chutes LLM (no Halo). Objective = OpenClaw (guards on).
-
-## Prefer for non-experts
+# miner-lab/test.py
 
 ```bash
-bash miner-lab/pyrit/run.sh attack --mode llm --question Q3 --seeds-from factors
-bash miner-lab/pyrit/run.sh attack --mode crescendo --question Q3 --max-turns 5
+python3 miner-lab/test.py                  # lowest-risk Q
+python3 miner-lab/test.py --question Q3 --n 12 --promote
+python3 miner-lab/test.py --auto-all
+python3 miner-lab/test.py --stage a        # Halo only
 ```
 
-Avoid `--convert leet,rot13` (usually blocks). Do not write jailbreak text in chat.
-
-## Rules
-
-- Exactly one `{{objective}}`, ≤2000 chars.
-- Do not commit attack dumps with harmful payloads (`candidates.jsonl` gitignored).
-- Venv: `miner-lab/pyrit/.venv`.
+Starts from challenge **objective only** (no seed wraps). Risk order: Q3→Q4→Q6→Q1→Q5→Q2.

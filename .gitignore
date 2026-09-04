@@ -81,6 +81,7 @@ miner-lab/candidates.json
 miner-lab/candidates.jsonl
 miner-lab/lab/candidates-*.json
 miner-lab/lab/pyrit-*.json
+miner-lab/lab/test-*.json
 miner-lab/pyrit/.venv/
 promptfoo-*.json
 **/e1u*.json
