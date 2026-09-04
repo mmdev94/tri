@@ -9,7 +9,6 @@ python3 miner-lab/test.py --stage a --n 8         # Halo only
 python3 miner-lab/test.py --auto-all
 ```
 
-Frames: situational / quoted / briefing / clarify / ticket (LLM embeds `{{objective}}` mid-message).  
-On Halo block: one softer rewrite (`--soften-retries 1`). Bare dump is off unless `--bare`.
-
-Needs `CHUTES_API_KEY`; judge needs OpenClaw.
+- Soft frames embed `{{objective}}` mid-message; empty/429/502 retries + `--pause` between gens.
+- `--promote` only writes `submission.json` when **judge > 0**.
+- Needs `CHUTES_API_KEY`; judge needs OpenClaw.
