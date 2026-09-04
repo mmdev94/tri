@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Run PyRIT miner-lab filter with the local venv.
+# PyRIT miner-lab entrypoint.
+#   bash miner-lab/pyrit/run.sh …                 # filter (Halo ± stack)
+#   bash miner-lab/pyrit/run.sh filter …
+#   bash miner-lab/pyrit/run.sh attack …          # advanced attacks
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 PYRIT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -13,7 +16,6 @@ if [[ ! -x "$PY" ]]; then
   "$VENV/bin/pip" install -r "$PYRIT_DIR/requirements.txt"
 fi
 
-# load .env without exporting everything via set -a if missing
 if [[ -f "$ROOT/.env" ]]; then
   set -a
   # shellcheck disable=SC1091
@@ -29,4 +31,21 @@ fi
 
 export PYTHONPATH="$PYRIT_DIR:${PYTHONPATH:-}"
 cd "$ROOT"
-exec "$PY" "$PYRIT_DIR/run_filter.py" "$@"
+
+CMD="filter"
+if [[ "${1:-}" == "attack" || "${1:-}" == "filter" || "${1:-}" == "send" ]]; then
+  CMD="$1"
+  shift
+fi
+
+case "$CMD" in
+  attack)
+    exec "$PY" "$PYRIT_DIR/run_attacks.py" "$@"
+    ;;
+  send)
+    exec "$PY" "$PYRIT_DIR/pyrit_send.py" "$@"
+    ;;
+  filter|*)
+    exec "$PY" "$PYRIT_DIR/run_filter.py" "$@"
+    ;;
+esac

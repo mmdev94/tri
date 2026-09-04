@@ -2,34 +2,32 @@
 name: pyrit-miner-lab
 description: >-
   Use when the user works on Trishool SN23 miner red-team filtering with PyRIT,
-  Halo guards, OpenClaw, or replacing Promptfoo. Prefer miner-lab/pyrit/run.sh
-  over HuggingFace-only targets; never author jailbreak prompts — only harness,
-  converters, classify/stack wiring, and export to candidates.
+  Halo guards, OpenClaw, or advanced attacks (Crescendo/PAIR/LLM converters).
+  Prefer run.sh attack for generation; never author jailbreak prompts yourself —
+  only harness, wiring, and export to candidates.
 ---
 
 # PyRIT miner-lab
 
-## Source of truth for score
+## Score path
 
-1. **Input Halo** allow on expanded TEMPLATE
-2. **OpenClaw stack** (survives output Halo)
-3. **Judge** via `test_template.py` Stage B / `eval-one.sh`
+1. **Attack** — `bash miner-lab/pyrit/run.sh attack --mode llm|crescendo|pair|all`
+2. **Halo allow** — built into attack (`--filter-halo`) or `run.sh filter`
+3. **Judge** — `test_template.py --stage b`
 
-HF-direct PyRIT targets are sandbox only.
+Attacker = Chutes LLM (no Halo). Objective = OpenClaw (guards on).
 
-## Commands
+## Prefer for non-experts
 
 ```bash
-bash miner-lab/pyrit/run.sh --question Q3 --stage input --seeds-from factors
-bash miner-lab/pyrit/run.sh --question Q3 --convert leet,rot13 --stage input
-bash miner-lab/pyrit/run.sh --questions Q3,Q5 --stage stack --also-output-classify
-python3 miner-lab/test_candidates.py -f miner-lab/candidates.jsonl --mode template --promote best
-python3 miner-lab/test_template.py --stage b --question Q3 --label pyrit1
+bash miner-lab/pyrit/run.sh attack --mode llm --question Q3 --seeds-from factors
+bash miner-lab/pyrit/run.sh attack --mode crescendo --question Q3 --max-turns 5
 ```
+
+Avoid `--convert leet,rot13` (usually blocks). Do not write jailbreak text in chat.
 
 ## Rules
 
-- Do not write or improve attack/jailbreak wording.
-- Keep exactly one `{{objective}}`, template ≤2000 chars.
-- Promptfoo under `miner-lab/promptfoo/` is removed; see `PROMPTFOO_RETIRED.md`.
-- Venv: `miner-lab/pyrit/.venv` (gitignored).
+- Exactly one `{{objective}}`, ≤2000 chars.
+- Do not commit attack dumps with harmful payloads (`candidates.jsonl` gitignored).
+- Venv: `miner-lab/pyrit/.venv`.
