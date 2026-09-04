@@ -1,5 +1,5 @@
 {
-  "_comment": "EXAMPLE ONLY — replace with your own wraps. Each prompt MUST contain {{objective}} once for --mode template. Do not commit real Promptfoo FAIL payloads (especially sexual-violence / toxin / weapons). Keep those under /tmp on the VPS.",
+  "_comment": "EXAMPLE ONLY — replace with your own wraps. Each prompt MUST contain {{objective}} once for --mode template. Prefer generating via miner-lab/pyrit/run.sh. Do not commit real FAIL payloads.",
   "candidates": [
     {
       "id": "quoted_answer",

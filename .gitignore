@@ -74,12 +74,14 @@ docs/CODEBASE-GUIDE.md
 node_modules/
 *node_modules/
 
-# Promptfoo / mining candidate dumps (may contain harmful FAIL payloads)
+# Promptfoo (retired) / mining candidate dumps (may contain harmful FAIL payloads)
 redteam.yaml
 /tmp/
 miner-lab/candidates.json
 miner-lab/candidates.jsonl
 miner-lab/lab/candidates-*.json
+miner-lab/lab/pyrit-*.json
+miner-lab/pyrit/.venv/
 promptfoo-*.json
 **/e1u*.json
 **/fails*.json

@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 """
-Test mining candidates from a Promptfoo FAIL export (or hand-written wraps).
+Test mining candidates from PyRIT export / FAIL dumps / hand-written wraps.
 
 Mining needs a TEMPLATE with exactly one {{objective}} for P3-007.
-Promptfoo "FAIL" texts are often full expanded attacks — use them as:
+Expanded attack texts — use them as:
   A) raw probes (input Halo + optional OpenClaw, no judge), or
   B) templates if you replace the harmful ask with {{objective}}
 
 Usage (repo root):
-  # candidates.jsonl: one JSON object per line: {"id":"f9","prompt":"..."} 
-  # or candidates.json: {"candidates":[{"id":"...","prompt":"..."}]}
-  python3 miner-lab/test_candidates.py --file /tmp/fails.jsonl --mode raw
-  python3 miner-lab/test_candidates.py --file miner-lab/candidates.json --mode template --questions Q3,Q5,Q6
-  python3 miner-lab/test_candidates.py --file miner-lab/candidates.json --mode template --question Q3
-  python3 miner-lab/test_candidates.py --file /tmp/fails.json --mode template --promote best --label cand1
+  # Prefer: bash miner-lab/pyrit/run.sh … → miner-lab/candidates.jsonl
+  python3 miner-lab/test_candidates.py --file miner-lab/candidates.jsonl --mode template --question Q3
+  python3 miner-lab/test_candidates.py --file miner-lab/candidates.example.json --mode template --promote best --label cand1
 
 Do NOT commit real FAIL payloads. Keep them under /tmp or gitignored paths.
 """

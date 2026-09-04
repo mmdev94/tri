@@ -1,27 +1,17 @@
-# Miner-lab
+# miner-lab
 
-**Active:** `pres_security_meeting` (ONE TEMPLATE, P3-007 Q1–Q6).
-
-```bash
-python3 miner-lab/test_template.py --label t12
-python3 miner-lab/test_template.py --stage a --label t12
-```
-
-t12 Stage A: allow **Q1,Q3,Q4,Q5,Q6** (block Q2). Stage B needs OpenClaw `:18789` + judge.
-
-Promptfoo (Halo input + OpenClaw/output guard), Q1–Q6 separately:
+**Active path:** PyRIT filter → Halo (± OpenClaw) → `test_template.py` / judge.
 
 ```bash
-bash miner-lab/promptfoo/run.sh --input-only
-bash miner-lab/promptfoo/run.sh --stack-only
+# Stage A-style filter (Q3)
+bash miner-lab/pyrit/run.sh --question Q3 --stage input --seeds-from factors
+
+# Promote survivor + Stage B judge
+python3 miner-lab/test_candidates.py -f miner-lab/candidates.jsonl --mode template --question Q3 --promote best
+python3 miner-lab/test_template.py --stage b --question Q3 --label pyrit1
+
+# Direct template test (no PyRIT)
+python3 miner-lab/test_template.py --question Q3 --label eas-q3
 ```
 
-See `miner-lab/promptfoo/README.md`.
-
-Candidates from Promptfoo FAILs (TEMPLATE with `{{objective}}`):
-
-```bash
-python3 miner-lab/test_candidates.py -f miner-lab/candidates.example.json --mode template --promote best
-python3 miner-lab/test_template.py --stage b --label cand1
-```
-
+See `miner-lab/pyrit/README.md`. Promptfoo under `miner-lab/promptfoo/` is removed.

@@ -1,5 +1,6 @@
 {
-  "dependencies": {
-    "promptfoo": "^0.122.2"
-  }
+  "name": "trishool-lab",
+  "private": true,
+  "description": "Promptfoo removed — use miner-lab/pyrit (see PROMPTFOO_RETIRED.md)",
+  "dependencies": {}
 }
