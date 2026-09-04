@@ -136,7 +136,18 @@ async def expand_with_pyrit(
     Mutate existing TEMPLATE dicts {id,prompt,...} via PyRIT.
     Skip deterministic obfuscation by default (often worsens Halo).
     """
-    llm_kinds = llm_kinds or ["vary", "persuade_logical_appeal", "tone_authoritative", "tone_academic"]
+    # Richer default set for --attack spread / mutate from champions
+    llm_kinds = llm_kinds or [
+        "vary",
+        "persuade_logical_appeal",
+        "persuade_authority_endorsement",
+        "persuade_evidence_based",
+        "persuade_expert_endorsement",
+        "tone_authoritative",
+        "tone_academic",
+        "tone_curious",
+        "tone_helpful",
+    ]
     det_kinds = det_kinds or []  # empty: leet/rot13 usually hurt Halo allow
     out = list(templates)
     seen = {t["prompt"] for t in templates}
@@ -159,7 +170,7 @@ async def expand_with_pyrit(
                 out.append(
                     {
                         **{k: v for k, v in t.items() if k != "prompt"},
-                        "id": f"{t['id']}__{kind}",
+                        "id": f"{t['id']}__{kind}"[:80],
                         "prompt": mutated,
                         "via": f"pyrit:{kind}",
                     }
@@ -182,7 +193,7 @@ async def expand_with_pyrit(
             out.append(
                 {
                     **{k: v for k, v in t.items() if k != "prompt"},
-                    "id": f"{t['id']}__det_{kind}",
+                    "id": f"{t['id']}__det_{kind}"[:80],
                     "prompt": mutated,
                     "via": f"pyrit_det:{kind}",
                 }
