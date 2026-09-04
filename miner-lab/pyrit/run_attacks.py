@@ -31,10 +31,17 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 LAB = HERE.parent
 ROOT = LAB.parent
-sys.path.insert(0, str(LAB))
+# Local scripts only — do not put LAB on path (shadows installed `pyrit` package).
 sys.path.insert(0, str(HERE))
 
-from qids_util import add_question_args, resolve_qids  # noqa: E402
+import importlib.util as _ilu
+
+_qspec = _ilu.spec_from_file_location("qids_util", LAB / "qids_util.py")
+assert _qspec and _qspec.loader
+_qids = _ilu.module_from_spec(_qspec)
+_qspec.loader.exec_module(_qids)
+add_question_args = _qids.add_question_args
+resolve_qids = _qids.resolve_qids
 
 from classify import classify_async  # noqa: E402
 from llm_targets import describe_targets, make_attacker_target, make_openclaw_target  # noqa: E402
