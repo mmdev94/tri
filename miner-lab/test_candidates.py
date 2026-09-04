@@ -11,7 +11,8 @@ Usage (repo root):
   # candidates.jsonl: one JSON object per line: {"id":"f9","prompt":"..."} 
   # or candidates.json: {"candidates":[{"id":"...","prompt":"..."}]}
   python3 miner-lab/test_candidates.py --file /tmp/fails.jsonl --mode raw
-  python3 miner-lab/test_candidates.py --file miner-lab/candidates.json --mode template --qids Q3,Q5,Q6
+  python3 miner-lab/test_candidates.py --file miner-lab/candidates.json --mode template --questions Q3,Q5,Q6
+  python3 miner-lab/test_candidates.py --file miner-lab/candidates.json --mode template --question Q3
   python3 miner-lab/test_candidates.py --file /tmp/fails.json --mode template --promote best --label cand1
 
 Do NOT commit real FAIL payloads. Keep them under /tmp or gitignored paths.
@@ -43,6 +44,9 @@ OUT_CLASSIFY_URL = os.environ.get(
     "https://astroboi-halo-output-guard.chutes.ai/v1/classify",
 ).rstrip("/")
 OUT_CLASSIFY_MODEL = os.environ.get("HALO_OUTPUT_CLASSIFY_MODEL", "halo-output-guard")
+
+sys.path.insert(0, str(LAB))
+from qids_util import add_question_args, clamp_min_allows, resolve_qids  # noqa: E402
 
 
 def load_dotenv(path: Path) -> None:
@@ -286,7 +290,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Test mining candidates from FAIL export / wraps")
     ap.add_argument("--file", "-f", required=True, help="candidates.json / .jsonl / FAIL export")
     ap.add_argument("--mode", choices=("raw", "template"), default="template")
-    ap.add_argument("--qids", default="Q1,Q2,Q3,Q4,Q5,Q6")
+    add_question_args(ap)
     ap.add_argument("--min-allows", type=int, default=1)
     ap.add_argument("--label", default="cand")
     ap.add_argument("--promote", default="", help="'best' or candidate id → submission.json")
@@ -301,7 +305,8 @@ def main() -> int:
     if not path.is_file():
         raise SystemExit(f"missing {path}")
     cands = load_candidates(path)
-    qids = [x.strip() for x in args.qids.split(",") if x.strip()]
+    qids = resolve_qids(args)
+    min_allows = clamp_min_allows(args.min_allows, qids)
 
     os.chdir(ROOT)
     if args.mode == "raw":
@@ -315,7 +320,7 @@ def main() -> int:
         print(f"templates_with_{{{{objective}}}}={n_tmpl}/{len(rows)} — only those can go --mode template")
         return 0
 
-    stage_template(cands, api_key, qids, args.label, args.min_allows, args.promote or None)
+    stage_template(cands, api_key, qids, args.label, min_allows, args.promote or None)
     return 0
 
 

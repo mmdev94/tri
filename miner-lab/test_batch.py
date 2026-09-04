@@ -6,7 +6,8 @@ Usage (repo root or miner-lab/, with .env CHUTES_API_KEY; OpenClaw for Stage B):
   python3 miner-lab/test_batch.py
   python3 miner-lab/test_batch.py --stage a
   python3 miner-lab/test_batch.py --stage b
-  python3 miner-lab/test_batch.py --sync --qids Q3,Q4,Q6 --judge-qids Q3,Q6
+  python3 miner-lab/test_batch.py --sync --questions Q3,Q4,Q6 --judge-qids Q3,Q6
+  python3 miner-lab/test_batch.py --question Q3 --label eas-q3
   python3 miner-lab/test_batch.py --max-judge 5 --label t8
 """
 
@@ -32,6 +33,9 @@ CLASSIFY_URL = os.environ.get(
     "HALO_CLASSIFY_URL", "https://astroboi-halo-guard.chutes.ai/v1/classify"
 ).rstrip("/")
 CLASSIFY_MODEL = os.environ.get("HALO_CLASSIFY_MODEL", "halo-guard")
+
+sys.path.insert(0, str(LAB))
+from qids_util import add_question_args, resolve_qids  # noqa: E402
 
 
 def load_dotenv(path: Path) -> None:
@@ -366,8 +370,8 @@ def main() -> int:
 
     ap = argparse.ArgumentParser(description="One-shot Halo→judge batch test")
     ap.add_argument("--stage", choices=("a", "b", "all"), default="all")
-    ap.add_argument("--qids", default="Q1,Q2,Q3,Q4,Q5,Q6")
-    ap.add_argument("--judge-qids", default="Q1,Q2,Q3,Q4,Q5,Q6")
+    add_question_args(ap)
+    ap.add_argument("--judge-qids", default="", help="Stage B Qs (default: same as --question/--questions)")
     ap.add_argument("--max-judge", type=int, default=8)
     ap.add_argument("--label", default="t11")
     ap.add_argument("--sync", action="store_true", help="Refresh ACTIVE challenge first")
@@ -379,8 +383,8 @@ def main() -> int:
         print("=== sync challenge ===")
         subprocess.check_call([sys.executable, str(LAB / "sync-challenge.py")], cwd=str(ROOT))
 
-    qids = [x.strip() for x in args.qids.split(",") if x.strip()]
-    jq = [x.strip() for x in args.judge_qids.split(",") if x.strip()]
+    qids = resolve_qids(args)
+    jq = [x.strip() for x in args.judge_qids.split(",") if x.strip()] or list(qids)
 
     # validate factor lengths
     for name, tmpl in active_factors().items():

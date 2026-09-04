@@ -11,6 +11,8 @@ Usage (repo root, CHUTES_API_KEY in .env):
   python3 miner-lab/test_template.py --stage b
   python3 miner-lab/test_template.py --sync --label t11
   python3 miner-lab/test_template.py --min-allows 3 --judge-all
+  python3 miner-lab/test_template.py --question Q3 --label eas-q3
+  python3 miner-lab/test_template.py --questions Q1,Q3 --stage a
 """
 
 from __future__ import annotations
@@ -34,7 +36,14 @@ CLASSIFY_URL = os.environ.get(
     "HALO_CLASSIFY_URL", "https://astroboi-halo-guard.chutes.ai/v1/classify"
 ).rstrip("/")
 CLASSIFY_MODEL = os.environ.get("HALO_CLASSIFY_MODEL", "halo-guard")
-DEFAULT_QIDS = ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"]
+
+sys.path.insert(0, str(LAB))
+from qids_util import (  # noqa: E402
+    DEFAULT_QIDS,
+    add_question_args,
+    clamp_min_allows,
+    resolve_qids,
+)
 
 
 def load_dotenv(path: Path) -> None:
@@ -336,7 +345,7 @@ def main() -> int:
 
     ap = argparse.ArgumentParser(description="Test one TEMPLATE on Q1–Q6")
     ap.add_argument("--stage", choices=("a", "b", "all"), default="all")
-    ap.add_argument("--qids", default=",".join(DEFAULT_QIDS), help="Default Q1,Q2,Q3,Q4,Q5,Q6")
+    add_question_args(ap)
     ap.add_argument(
         "--judge-qids",
         default="",
@@ -345,7 +354,7 @@ def main() -> int:
     ap.add_argument(
         "--judge-all",
         action="store_true",
-        help="Stage B: probe all Q1–Q6 (still only evals Halo allows)",
+        help="Stage B: probe all selected Qs (still only evals Halo allows)",
     )
     ap.add_argument("--min-allows", type=int, default=3)
     ap.add_argument("--label", default="t11")
@@ -368,12 +377,15 @@ def main() -> int:
         subprocess.check_call([sys.executable, str(LAB / "sync-challenge.py")], cwd=str(ROOT))
 
     template = load_template(submission)
-    qids = [x.strip() for x in args.qids.split(",") if x.strip()]
+    qids = resolve_qids(args)
+    min_allows = clamp_min_allows(args.min_allows, qids)
+    if min_allows != args.min_allows:
+        print(f"note: min-allows clamped {args.min_allows} → {min_allows} for {qids}")
     jq = [x.strip() for x in args.judge_qids.split(",") if x.strip()] or None
 
     a_payload: dict | None = None
     if args.stage in ("a", "all"):
-        a_payload = stage_a(template, qids, args.label, args.min_allows, submission)
+        a_payload = stage_a(template, qids, args.label, min_allows, submission)
         if (
             args.stage == "a"
             and a_payload
